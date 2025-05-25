@@ -1,30 +1,8 @@
 # JobPilot
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+JobPilot is a lightweight job application tracker that helps you stay organized during your job hunt.
+Built with Next.js, TailwindCSS, shadcn/ui, React Query, and Zustand, it features email/password authentication and a clean, responsive UI.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/szyp86-gmailcoms-projects/v0-job-pilot)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/JtrpKQTL1Bg)
+The project was fully designed and developed in just 4 hours, using AI-powered tools like V0.dev for layout generation.
 
-## Overview
-
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
-
-## Deployment
-
-Your project is live at:
-
-**[https://vercel.com/szyp86-gmailcoms-projects/v0-job-pilot](https://vercel.com/szyp86-gmailcoms-projects/v0-job-pilot)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.dev/chat/projects/JtrpKQTL1Bg](https://v0.dev/chat/projects/JtrpKQTL1Bg)**
-
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+🔗 Live demo: [JobPilot](https://v0-job-pilot-pearl.vercel.app/)
