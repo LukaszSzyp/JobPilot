@@ -12,18 +12,21 @@ export const useAuth = () => {
   const router = useRouter()
 
   // Sprawdź aktualną sesję przy ładowaniu
-  const { isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["auth"],
     queryFn: AuthService.getCurrentUser,
-    onSuccess: (data) => {
-      setUser(data)
-      setLoading(false)
-    },
-    onError: () => {
-      setUser(null)
-      setLoading(false)
-    },
   })
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isError && data) {
+        setUser(data)
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    }
+  }, [data, isLoading, isError, setUser, setLoading])
 
   // Nasłuchuj zmian stanu autoryzacji
   useEffect(() => {
@@ -39,7 +42,8 @@ export const useAuth = () => {
   }, [setUser, setLoading, queryClient])
 
   const signInMutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) => AuthService.signIn(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      AuthService.signIn(email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] })
       router.push("/dashboard")
@@ -47,8 +51,15 @@ export const useAuth = () => {
   })
 
   const signUpMutation = useMutation({
-    mutationFn: ({ email, password, fullName }: { email: string; password: string; fullName?: string }) =>
-      AuthService.signUp(email, password, fullName),
+    mutationFn: ({
+      email,
+      password,
+      fullName,
+    }: {
+      email: string
+      password: string
+      fullName?: string
+    }) => AuthService.signUp(email, password, fullName),
     onSuccess: () => {
       router.push("/auth/verify-email")
     },

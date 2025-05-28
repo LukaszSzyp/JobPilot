@@ -1,9 +1,18 @@
 import { supabase } from "@/lib/supabase"
-import type { JobApplication, JobApplicationFilters, JobApplicationStats } from "@/types"
+import type {
+  JobApplication,
+  JobApplicationFilters,
+  JobApplicationStats,
+} from "@/types"
 
 export class JobApplicationsService {
-  static async getApplications(filters?: JobApplicationFilters): Promise<JobApplication[]> {
-    let query = supabase.from("job_applications").select("*").order("application_date", { ascending: false })
+  static async getApplications(
+    filters?: JobApplicationFilters
+  ): Promise<JobApplication[]> {
+    let query = supabase
+      .from("job_applications")
+      .select("*")
+      .order("application_date", { ascending: false })
 
     if (filters?.status) {
       query = query.eq("status", filters.status)
@@ -28,15 +37,22 @@ export class JobApplicationsService {
   }
 
   static async createApplication(
-    application: Omit<JobApplication, "id" | "user_id" | "created_at" | "updated_at">,
+    application: Omit<JobApplication, "id" | "created_at" | "updated_at">
   ): Promise<JobApplication> {
-    const { data, error } = await supabase.from("job_applications").insert([application]).select().single()
+    const { data, error } = await supabase
+      .from("job_applications")
+      .insert([application])
+      .select()
+      .single()
 
     if (error) throw error
     return data
   }
 
-  static async updateApplication(id: string, updates: Partial<JobApplication>): Promise<JobApplication> {
+  static async updateApplication(
+    id: string,
+    updates: Partial<JobApplication>
+  ): Promise<JobApplication> {
     const { data, error } = await supabase
       .from("job_applications")
       .update({ ...updates, updated_at: new Date().toISOString() })
@@ -49,24 +65,36 @@ export class JobApplicationsService {
   }
 
   static async deleteApplication(id: string): Promise<void> {
-    const { error } = await supabase.from("job_applications").delete().eq("id", id)
+    const { error } = await supabase
+      .from("job_applications")
+      .delete()
+      .eq("id", id)
 
     if (error) throw error
   }
 
   static async getStats(): Promise<JobApplicationStats> {
-    const { data, error } = await supabase.from("job_applications").select("status")
+    const { data, error } = await supabase
+      .from("job_applications")
+      .select("status")
 
     if (error) throw error
 
     const applications = data || []
     const total = applications.length
-    const applied = applications.filter((app) => app.status === "applied").length
-    const interview = applications.filter((app) => app.status === "interview").length
+    const applied = applications.filter(
+      (app) => app.status === "applied"
+    ).length
+    const interview = applications.filter(
+      (app) => app.status === "interview"
+    ).length
     const offer = applications.filter((app) => app.status === "offer").length
-    const rejected = applications.filter((app) => app.status === "rejected").length
+    const rejected = applications.filter(
+      (app) => app.status === "rejected"
+    ).length
 
-    const responseRate = total > 0 ? ((interview + offer + rejected) / total) * 100 : 0
+    const responseRate =
+      total > 0 ? ((interview + offer + rejected) / total) * 100 : 0
     const successRate = total > 0 ? (offer / total) * 100 : 0
 
     return {
