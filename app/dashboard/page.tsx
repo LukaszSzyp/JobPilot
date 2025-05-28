@@ -67,18 +67,25 @@ export default function DashboardPage() {
                             DEMO: {remainingSlots}/10 slotów
                           </span>
                         )}
+                        {user && (
+                          <span className="ml-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                            Zalogowany: {user.email}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>
                 </div>
-                <Button
-                  onClick={() => setIsDialogOpen(true)}
-                  disabled={!canAddMore}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {canAddMore ? "Dodaj aplikację" : "Limit osiągnięty"}
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={() => setIsDialogOpen(true)}
+                    disabled={!canAddMore}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {canAddMore ? "Dodaj aplikację" : "Limit osiągnięty"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

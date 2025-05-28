@@ -11,24 +11,23 @@ export const useAuth = () => {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  // Sprawdź aktualną sesję przy ładowaniu
-  const { data, isLoading, isError } = useQuery({
+  // Check current session on load
+  const { isLoading } = useQuery({
     queryKey: ["auth"],
     queryFn: AuthService.getCurrentUser,
+    onSuccess: (data) => {
+      setUser(data)
+      setLoading(false)
+    },
+    onError: () => {
+      setUser(null)
+      setLoading(false)
+    },
+    retry: 1, // Only retry once to avoid infinite loops
+    staleTime: 1000 * 60 * 5, // 5 minutes
   })
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (!isError && data) {
-        setUser(data)
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    }
-  }, [data, isLoading, isError, setUser, setLoading])
-
-  // Nasłuchuj zmian stanu autoryzacji
+  // Listen for auth state changes
   useEffect(() => {
     const {
       data: { subscription },
@@ -42,8 +41,7 @@ export const useAuth = () => {
   }, [setUser, setLoading, queryClient])
 
   const signInMutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      AuthService.signIn(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) => AuthService.signIn(email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth"] })
       router.push("/dashboard")
@@ -51,15 +49,8 @@ export const useAuth = () => {
   })
 
   const signUpMutation = useMutation({
-    mutationFn: ({
-      email,
-      password,
-      fullName,
-    }: {
-      email: string
-      password: string
-      fullName?: string
-    }) => AuthService.signUp(email, password, fullName),
+    mutationFn: ({ email, password, fullName }: { email: string; password: string; fullName?: string }) =>
+      AuthService.signUp(email, password, fullName),
     onSuccess: () => {
       router.push("/auth/verify-email")
     },
@@ -70,7 +61,14 @@ export const useAuth = () => {
     onSuccess: () => {
       setUser(null)
       queryClient.clear()
-      router.push("/auth/login")
+      router.push("/")
+    },
+    onError: (error) => {
+      console.error("Sign out error:", error)
+      // Even if there's an error, clear local state
+      setUser(null)
+      queryClient.clear()
+      router.push("/")
     },
   })
 
@@ -79,9 +77,10 @@ export const useAuth = () => {
     isLoading,
     signIn: signInMutation.mutate,
     signUp: signUpMutation.mutate,
-    signOut: signOutMutation.mutate,
+    signOut: () => signOutMutation.mutate(),
     isSigningIn: signInMutation.isPending,
     isSigningUp: signUpMutation.isPending,
+    isSigningOut: signOutMutation.isPending,
     signInError: signInMutation.error,
     signUpError: signUpMutation.error,
   }

@@ -80,9 +80,15 @@ export function ApplicationDialog({ application, open, onOpenChange }: Applicati
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    console.log("📝 Form submitted:", formData)
+    console.log("🎯 Is demo:", isDemo)
+    console.log("🎯 Can add more:", canAddMore)
+
     if (application) {
+      console.log("🔄 Updating application:", application.id)
       updateApplication({ id: application.id, input: formData })
     } else {
+      console.log("🚀 Creating new application")
       createApplication(formData)
     }
 
@@ -116,11 +122,17 @@ export function ApplicationDialog({ application, open, onOpenChange }: Applicati
           </Alert>
         )}
 
-        {/* Błąd przy przekroczeniu limitu */}
+        {/* Błąd przy przekroczeniu limitu lub inne błędy */}
         {error && (
           <Alert variant="destructive" className="bg-gradient-to-r from-red-50 to-red-100">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{error.message}</AlertDescription>
+            <AlertDescription>
+              <strong>Błąd:</strong> {error.message}
+              <details className="mt-2 text-xs">
+                <summary>Szczegóły błędu (kliknij aby rozwinąć)</summary>
+                <pre className="mt-1 whitespace-pre-wrap">{JSON.stringify(error, null, 2)}</pre>
+              </details>
+            </AlertDescription>
           </Alert>
         )}
 

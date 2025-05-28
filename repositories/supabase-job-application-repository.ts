@@ -15,6 +15,7 @@ export class SupabaseJobApplicationRepository implements IJobApplicationReposito
   async create(
     application: Omit<JobApplication, "id" | "user_id" | "created_at" | "updated_at">,
   ): Promise<JobApplication> {
+    // Używamy serwisu, który teraz dodaje user_id
     return JobApplicationsService.createApplication(application)
   }
 

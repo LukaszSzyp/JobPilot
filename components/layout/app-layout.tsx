@@ -13,8 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, User, BarChart3, LogIn, Navigation } from "lucide-react"
+import { LogOut, User, BarChart3, LogIn, Navigation, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -22,6 +23,18 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const { user, signOut } = useAuth()
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      await signOut()
+    } catch (error) {
+      console.error("Error signing out:", error)
+    } finally {
+      setIsSigningOut(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -32,9 +45,12 @@ export function AppLayout({ children }: AppLayoutProps) {
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg">
                 <Navigation className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              <Link
+                href="/"
+                className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
+              >
                 JobPilot
-              </h1>
+              </Link>
             </div>
 
             <div className="flex items-center gap-4">
@@ -75,9 +91,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                       <span>Statystyki</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()} className="hover:bg-red-50 text-red-600">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Wyloguj się</span>
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      disabled={isSigningOut}
+                      className="hover:bg-red-50 text-red-600 focus:bg-red-50 focus:text-red-600"
+                    >
+                      {isSigningOut ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <LogOut className="mr-2 h-4 w-4" />
+                      )}
+                      <span>{isSigningOut ? "Wylogowywanie..." : "Wyloguj się"}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

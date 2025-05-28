@@ -12,6 +12,8 @@ export const useJobApplications = () => {
   const { user } = useAuthStore()
   const isDemo = !user
 
+  console.log("🎯 useJobApplications - user:", user?.id, "isDemo:", isDemo)
+
   // Factory creates appropriate repository based on auth state
   const repository = RepositoryFactory.createJobApplicationRepository(isDemo)
 
@@ -50,12 +52,21 @@ export const useJobApplications = () => {
   // CRUD operations using the repository
   const crud = useCrudOperations(
     {
-      create: repository.create.bind(repository),
+      create: (input) => {
+        console.log("🎯 Hook create called with:", input)
+        return repository.create(input)
+      },
       update: repository.update.bind(repository),
       delete: repository.delete.bind(repository),
     },
     {
       queryKeys: [["job-applications"], ["job-applications-all"], ["job-applications-stats"]],
+      onSuccess: () => {
+        console.log("✅ CRUD operation successful")
+      },
+      onError: (error) => {
+        console.error("❌ CRUD operation failed:", error)
+      },
     },
   )
 
@@ -64,6 +75,14 @@ export const useJobApplications = () => {
   const isEmptyDueToFilters = applications.length === 0 && allApplications.length > 0 && hasActiveFilters
   const remainingSlots = isDemo ? Math.max(0, 10 - allApplications.length) : Number.POSITIVE_INFINITY
   const canAddMore = !isDemo || remainingSlots > 0
+
+  console.log("📊 Hook state:", {
+    applicationsCount: applications.length,
+    allApplicationsCount: allApplications.length,
+    canAddMore,
+    remainingSlots,
+    isDemo,
+  })
 
   return {
     applications,

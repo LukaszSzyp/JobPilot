@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { AuthService } from "@/services/auth-service"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, CheckCircle, XCircle, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -34,27 +35,10 @@ function AuthCallbackContent() {
           }
 
           if (data.user) {
-            // Check if user profile exists, if not - create it
-            const { data: profile, error: profileError } = await supabase
-              .from("profiles")
-              .select("*")
-              .eq("id", data.user.id)
-              .single()
+            console.log("🔧 Ensuring profile exists for user:", data.user.id)
 
-            if (profileError && profileError.code === "PGRST116") {
-              // Profile doesn't exist, create it
-              const { error: insertError } = await supabase.from("profiles").insert([
-                {
-                  id: data.user.id,
-                  email: data.user.email!,
-                  full_name: data.user.user_metadata?.full_name || "",
-                },
-              ])
-
-              if (insertError) {
-                console.error("Error creating profile:", insertError)
-              }
-            }
+            // Use AuthService to ensure profile exists
+            await AuthService.ensureProfileExists(data.user)
 
             setStatus("success")
             setMessage(

@@ -1,6 +1,4 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import type { LucideIcon } from "lucide-react"
 
@@ -16,7 +14,6 @@ interface EmptyStateProps {
   icon: LucideIcon
   title: string
   description: string
-  actions?: EmptyStateAction[]
   variant?: "default" | "warning" | "info"
 }
 
@@ -41,7 +38,7 @@ const variantStyles = {
   },
 }
 
-export function EmptyState({ icon: Icon, title, description, actions = [], variant = "default" }: EmptyStateProps) {
+export function EmptyState({ icon: Icon, title, description, variant = "default" }: EmptyStateProps) {
   const styles = variantStyles[variant]
 
   return (
@@ -55,21 +52,6 @@ export function EmptyState({ icon: Icon, title, description, actions = [], varia
             <h3 className={`text-lg font-semibold ${styles.title} mb-2`}>{title}</h3>
             <p className={`${styles.description} mb-6 max-w-md`}>{description}</p>
           </div>
-          {actions.length > 0 && (
-            <div className="flex gap-3">
-              {actions.map((action, index) => (
-                <Button
-                  key={index}
-                  onClick={action.onClick}
-                  variant={action.variant || "default"}
-                  className={action.className}
-                >
-                  <action.icon className="mr-2 h-4 w-4" />
-                  {action.label}
-                </Button>
-              ))}
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
