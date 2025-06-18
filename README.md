@@ -5,4 +5,4 @@ Built with Next.js, TailwindCSS, shadcn/ui, React Query, and Zustand, it feature
 
 The project was fully designed and developed in just 4 hours, using AI-powered tools like V0.dev for layout generation.
 
-🔗 Live demo: [JobPilot]([https://v0-job-pilot-git-main-szyp86-gmailcoms-projects.vercel.app/](https://v0-job-pilot-szyp86-gmailcoms-projects.vercel.app/))
+🔗 Live demo: [JobPilot](https://v0-job-pilot-szyp86-gmailcoms-projects.vercel.app/)
